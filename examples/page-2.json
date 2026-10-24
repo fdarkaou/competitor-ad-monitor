@@ -1,0 +1,45 @@
+{
+  "items": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "canonicalKey": "paid:meta:900000000000001",
+      "source": "paid",
+      "platform": "meta",
+      "archiveId": "900000000000001",
+      "advertiser": { "externalId": "100000000000001", "name": "Example Meal Planner" },
+      "status": "active",
+      "startedAt": "2026-10-10T00:00:00.000Z",
+      "endedAt": null,
+      "discoveredAt": "2026-10-22T06:12:00.000Z",
+      "sourceUrl": "https://www.facebook.com/ads/library?id=900000000000001",
+      "creative": { "format": "video", "hook": "Turn saved recipes into a grocery list", "body": null, "title": "Example Meal Planner", "description": null, "ctaText": "Download", "imageUrls": [], "videoUrls": [], "units": [] },
+      "productLink": { "kind": "app_store", "name": "Example Meal Planner", "url": "https://apps.apple.com/app/id1000000001", "externalId": "1000000001", "confidence": "verified" },
+      "destination": { "kind": "app_store", "url": "https://apps.apple.com/app/id1000000001", "host": "apps.apple.com", "page": "apps.apple.com", "appStoreId": "1000000001" },
+      "productIconUrl": null,
+      "performance": { "kind": "unavailable" },
+      "saved": false
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000003",
+      "canonicalKey": "paid:meta:900000000000003",
+      "source": "paid",
+      "platform": "meta",
+      "archiveId": "900000000000003",
+      "advertiser": { "externalId": "100000000000001", "name": "Example Meal Planner" },
+      "status": "inactive",
+      "startedAt": "2026-09-01T00:00:00.000Z",
+      "endedAt": "2026-10-01T00:00:00.000Z",
+      "discoveredAt": "2026-10-20T09:00:00.000Z",
+      "sourceUrl": "https://www.facebook.com/ads/library?id=900000000000003",
+      "creative": { "format": "carousel", "hook": "Plan a week of dinners | in 5 minutes", "body": null, "title": "Example Meal Planner", "description": null, "ctaText": "Learn more", "imageUrls": [], "videoUrls": [], "units": [] },
+      "productLink": { "kind": "app_store", "name": "Example Meal Planner", "url": "https://apps.apple.com/app/id1000000001", "externalId": "1000000001", "confidence": "verified" },
+      "destination": { "kind": "app_store", "url": "https://apps.apple.com/app/id1000000001", "host": "apps.apple.com", "page": "apps.apple.com", "appStoreId": "1000000001" },
+      "productIconUrl": null,
+      "performance": { "kind": "unavailable" },
+      "saved": false
+    }
+  ],
+  "nextCursor": null,
+  "hasMore": false,
+  "searchSummary": { "returnedAds": 2, "returnedAdvertisers": 1, "returnedApps": 1, "grouped": false }
+}

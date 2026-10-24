@@ -1,0 +1,14 @@
+{
+  "name": "competitor-ad-monitor",
+  "version": "1.0.0",
+  "description": "Check your App Store competitors for newly found Meta and TikTok ads on a schedule, using PeekPanda's stored ad-library observations. Markdown/CSV digest and an optional Slack or Discord ping.",
+  "type": "module",
+  "bin": { "competitor-ad-monitor": "cli.js" },
+  "scripts": { "test": "node --test test/" },
+  "engines": { "node": ">=18" },
+  "license": "MIT",
+  "author": "Fekri Darkaoui",
+  "repository": { "type": "git", "url": "https://github.com/fdarkaou/competitor-ad-monitor.git" },
+  "homepage": "https://fdarkaou.github.io/competitor-ad-monitor/",
+  "keywords": ["app-store", "competitor-analysis", "meta-ads", "tiktok-ads", "ad-library", "peekpanda", "mobile-marketing"]
+}

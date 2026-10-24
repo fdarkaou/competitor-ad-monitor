@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Competitor ad monitor for App Store apps</title>
+<meta name="description" content="Paste PeekPanda paid-ad search results for your App Store competitors and get a digest of new Meta and TikTok ads: who launched what, which format, how long it has run. Runs in your browser.">
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; max-width: 1040px; margin: 2rem auto; padding: 0 1rem; color: #1b1b1f; }
+  textarea { width: 100%; min-height: 180px; font: 13px ui-monospace, monospace; }
+  input[type=text] { font: 13px ui-monospace, monospace; width: 16em; }
+  button { padding: .5rem 1rem; margin: .5rem .5rem .5rem 0; cursor: pointer; }
+  table { border-collapse: collapse; width: 100%; margin-top: 1rem; font-size: 14px; }
+  th, td { border-bottom: 1px solid #ddd; padding: .4rem .5rem; text-align: left; vertical-align: top; }
+  td.n { text-align: right; }
+  .chips span { display: inline-block; background: #f1f3f5; border-radius: 999px; padding: .1rem .6rem; margin: .15rem .3rem .15rem 0; font-size: 13px; }
+  .muted { color: #777; } .err { color: #cf222e; white-space: pre-wrap; }
+  pre { background: #f6f8fa; padding: .75rem; overflow-x: auto; font-size: 13px; }
+  footer { margin-top: 2.5rem; font-size: 13px; color: #555; }
+</style>
+</head>
+<body>
+<h1>Competitor ad monitor</h1>
+<p>See which new Meta and TikTok ads your App Store competitors are running. Paste one or more paid-ad search responses below (a JSON object, an array of them, or one object per line). Duplicates across pages are merged. Nothing leaves your browser.</p>
+<textarea id="in" spellcheck="false" placeholder='{"items":[{"platform":"meta","archiveId":"...","advertiser":{"name":"..."},"discoveredAt":"2026-10-22T06:12:00.000Z", ...}],"hasMore":false}'></textarea>
+<div>
+  <button id="go">Build digest</button>
+  <button id="ex">Load example data</button>
+  <label>Only ads found after <input id="since" type="text" placeholder="2026-10-21T00:00:00Z"></label>
+</div>
+<div id="err" class="err"></div>
+<div id="out"></div>
+
+<h2>Where to get the JSON</h2>
+<p>The input is the paid-ad search response from <a href="https://peekpanda.com">PeekPanda</a>, which stores dated observations from the public Meta and TikTok ad libraries and links each ad to the App Store app it points to. Ask for the ads verified to link to your rivals, newest finds first:</p>
+<pre>curl --get https://api.peekpanda.com/v1/paid-ads \
+  -H "Authorization: Bearer $PEEKPANDA_TOKEN" \
+  --data-urlencode 'storeIds=1000000001,1000000002' \
+  --data-urlencode 'sort=recently_discovered' \
+  --data-urlencode 'limit=40'</pre>
+<p>Over MCP this is the <code>get_ads</code> tool with action <code>search</code>. You need a PeekPanda account. The <a href="https://peekpanda.com/docs/scheduled-competitor-ads">scheduled competitor ads guide</a> explains the <code>discoveredAfter</code> loop this page and the CLI follow.</p>
+<p>How to read it: "Found" is when PeekPanda first recorded the ad, not when the advertiser started it ("Started", where the source discloses it). Run days count a live ad to today and a stopped ad to its disclosed end. There is no spend figure. An empty result does not prove a rival stopped advertising.</p>
+<p>A command-line version that remembers the last run, writes Markdown or CSV and pings Slack or Discord lives in the <a href="https://github.com/fdarkaou/competitor-ad-monitor">GitHub repo</a>.</p>
+<footer>MIT licensed. Example data is made up.</footer>
+
+<script type="module">
+import { collect, toRow, summary, newestDiscoveredAt } from './monitor.js';
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const safeUrl = (u) => (/^https:\/\//.test(u) ? u : '');
+
+function parseInput(text) {
+  const t = text.trim();
+  if (!t) return [];
+  try { const v = JSON.parse(t); return Array.isArray(v) ? v : [v]; }
+  catch { return t.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)); }
+}
+
+function render() {
+  $('err').textContent = ''; $('out').innerHTML = '';
+  let pages;
+  try { pages = parseInput($('in').value); } catch (e) { $('err').textContent = 'Could not read JSON: ' + e.message; return; }
+  const since = $('since').value.trim();
+  let items = collect(pages);
+  if (since) items = items.filter((it) => !it.discoveredAt || it.discoveredAt > since);
+  const rows = items.map((it) => toRow(it));
+  if (!rows.length) { $('out').innerHTML = '<p class="muted">No ads match. That does not prove the apps stopped advertising.</p>'; return; }
+  const s = summary(rows);
+  const chips = (o) => Object.entries(o).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<span>${esc(k)} · ${v}</span>`).join('');
+  const more = pages.some((p) => p?.hasMore) ? '<p class="muted">A pasted page says hasMore: true. Follow nextCursor to see the rest.</p>' : '';
+  $('out').innerHTML = `
+    <p><strong>${s.total}</strong> ad${s.total === 1 ? '' : 's'}${since ? ` found after ${esc(since)}` : ''}. Newest found: ${esc(newestDiscoveredAt(items) ?? '–')} (use it as <code>discoveredAfter</code> next time).</p>
+    <div class="chips">${chips(s.advertisers)}</div><div class="chips">${chips(s.formats)}${chips(s.platforms)}</div>${more}
+    <table><thead><tr><th>Advertiser</th><th>Platform</th><th>Format</th><th>Status</th><th>Hook</th><th>Started</th><th>Run days</th><th>Found</th><th>Ad</th></tr></thead><tbody>
+    ${rows.map((r) => `<tr><td>${esc(r.advertiser)}</td><td>${esc(r.platform)}</td><td>${esc(r.format)}</td><td>${esc(r.status)}</td><td>${esc(r.hook) || '–'}</td><td>${esc(r.startedAt) || '–'}</td><td class="n">${r.runDays ?? '–'}</td><td>${esc(r.discoveredAt.slice(0, 10))}</td><td>${safeUrl(r.url) ? `<a href="${esc(r.url)}" rel="noopener nofollow" target="_blank">open</a>` : '–'}</td></tr>`).join('')}
+    </tbody></table>`;
+}
+
+$('go').onclick = render;
+$('ex').onclick = async () => {
+  const pages = await Promise.all(['examples/page-1.json', 'examples/page-2.json'].map((f) => fetch(f).then((r) => r.json())));
+  $('in').value = pages.map((p) => JSON.stringify(p)).join('\n');
+  render();
+};
+</script>
+</body>
+</html>

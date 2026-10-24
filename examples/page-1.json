@@ -1,0 +1,45 @@
+{
+  "items": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "canonicalKey": "paid:meta:900000000000001",
+      "source": "paid",
+      "platform": "meta",
+      "archiveId": "900000000000001",
+      "advertiser": { "externalId": "100000000000001", "name": "Example Meal Planner" },
+      "status": "active",
+      "startedAt": "2026-10-10T00:00:00.000Z",
+      "endedAt": null,
+      "discoveredAt": "2026-10-22T06:12:00.000Z",
+      "sourceUrl": "https://www.facebook.com/ads/library?id=900000000000001",
+      "creative": { "format": "video", "hook": "Turn saved recipes into a grocery list", "body": "Turn saved recipes into a grocery list in one tap.", "title": "Example Meal Planner", "description": null, "ctaText": "Download", "imageUrls": [], "videoUrls": [], "units": [] },
+      "productLink": { "kind": "app_store", "name": "Example Meal Planner", "url": "https://apps.apple.com/app/id1000000001", "externalId": "1000000001", "confidence": "verified" },
+      "destination": { "kind": "app_store", "url": "https://apps.apple.com/app/id1000000001", "host": "apps.apple.com", "page": "apps.apple.com", "appStoreId": "1000000001" },
+      "productIconUrl": null,
+      "performance": { "kind": "unavailable" },
+      "saved": false
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000002",
+      "canonicalKey": "paid:tiktok:900000000000002",
+      "source": "paid",
+      "platform": "tiktok",
+      "archiveId": "900000000000002",
+      "advertiser": { "externalId": "100000000000002", "name": "Example Calorie Counter" },
+      "status": "active",
+      "startedAt": "2026-10-18T00:00:00.000Z",
+      "endedAt": null,
+      "discoveredAt": "2026-10-21T18:40:00.000Z",
+      "sourceUrl": "https://library.tiktok.com/ads/detail/?ad_id=900000000000002",
+      "creative": { "format": "image", "hook": "Snap your plate, see the calories", "body": "Snap your plate, see the calories.", "title": "Example Calorie Counter", "description": null, "ctaText": null, "imageUrls": [], "videoUrls": [], "units": [] },
+      "productLink": { "kind": "app_store", "name": "Example Calorie Counter", "url": "https://apps.apple.com/app/id1000000002", "externalId": "1000000002", "confidence": "verified" },
+      "destination": { "kind": "app_store", "url": "https://apps.apple.com/app/id1000000002", "host": "apps.apple.com", "page": "apps.apple.com", "appStoreId": "1000000002" },
+      "productIconUrl": null,
+      "performance": { "kind": "unavailable" },
+      "saved": false
+    }
+  ],
+  "nextCursor": "example-cursor",
+  "hasMore": true,
+  "searchSummary": { "returnedAds": 2, "returnedAdvertisers": 2, "returnedApps": 2, "grouped": false }
+}

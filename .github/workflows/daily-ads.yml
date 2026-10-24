@@ -1,0 +1,34 @@
+# Example: every weekday morning, list the paid ads PeekPanda found for your rivals since the last run,
+# write them to the run summary, and ping Slack or Discord. The newest discoveredAt is kept in the Actions cache.
+# Add PEEKPANDA_TOKEN and AD_WEBHOOK_URL as repository secrets, set the repository variable
+# ENABLE_AD_MONITOR to true, and put your own App Store ids below (up to 25).
+name: daily competitor ads
+on:
+  schedule:
+    - cron: '0 7 * * 1-5'
+  workflow_dispatch:
+jobs:
+  ads:
+    if: ${{ vars.ENABLE_AD_MONITOR == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Restore last timestamp
+        uses: actions/cache/restore@v4
+        with:
+          path: .ad-monitor-state.json
+          key: ad-monitor-state-${{ github.run_id }}
+          restore-keys: ad-monitor-state-
+      - name: New ads since last run
+        env:
+          PEEKPANDA_TOKEN: ${{ secrets.PEEKPANDA_TOKEN }}
+        run: node cli.js 1000000001 1000000002 --webhook "${{ secrets.AD_WEBHOOK_URL }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Save timestamp
+        if: ${{ hashFiles('.ad-monitor-state.json') != '' }}
+        uses: actions/cache/save@v4
+        with:
+          path: .ad-monitor-state.json
+          key: ad-monitor-state-${{ github.run_id }}
